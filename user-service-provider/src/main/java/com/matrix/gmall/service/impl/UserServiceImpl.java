@@ -7,6 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 
 
+/**
+ * 只写实现类就可以 接口在gmall-interface中 pom中导入gmall-interface
+ * @author yihaosun
+ */
 public class UserServiceImpl implements UserService {
 
     @Override

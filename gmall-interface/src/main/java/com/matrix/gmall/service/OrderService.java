@@ -12,6 +12,6 @@ public interface OrderService {
      *
      * @param userId
      */
-    public List<UserAddress> initOrder(String userId);
+    List<UserAddress> initOrder(String userId);
 
 }
