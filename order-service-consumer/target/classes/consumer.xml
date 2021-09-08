@@ -16,23 +16,35 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181"></dubbo:registry>
 
     <!-- 配置本地存根-->
-    <!-- 声明需要调用的远程服务的接口；生成远程服务代理  -->
     <!--
-        1）、精确优先 (方法级优先，接口级次之，全局配置再次之)
-        2）、消费者设置优先(如果级别一样，则消费方优先，提供方次之)
+        stub="com.matrix.gmall.service.impl.UserServiceStub"
     -->
-    <!-- timeout="0" 默认是1000ms-->
-    <!-- retries="":重试次数，不包含第一次调用，0代表不重试-->
-    <!-- 幂等（设置重试次数）【查询、删除、修改】、非幂等（不能设置重试次数）【新增】 -->
+
+    <!-- 声明需要调用的远程服务的接口；生成远程服务代理  -->
     <dubbo:reference interface="com.matrix.gmall.service.UserService"
-                     id="userService" timeout="5000" retries="3" version="*">
+                     id="userService" timeout="5000" retries="3" version="*" stub="com.matrix.gmall.service.impl.UserServiceStub">
+        <!-- 如果version配置成*的形式 那么就随机用一个版本 灰度发布 -->
+
+        <!-- a. 如果加上了check = "false" 的话 那么就是启动时不检查生产者-->
+        <!-- b. 超时设置 timeout 默认是1000ms -->
+        <!-- c. 配置只有哪个方法生效和方法的生效时间用如下的配置 -->
+        <!-- 覆盖关系: 方法级优先 接口级次之 全局配置再次之 -->
+
+        <!-- 1）、级别精确优先 (方法级优先，接口级次之，全局配置再次之)-->
+        <!-- 2）、消费者设置优先(如果级别一样，则消费方优先，提供方次之)-->
         <!-- <dubbo:method name="getUserAddressList" timeout="1000"></dubbo:method> -->
+
+        <!-- retries="":重试次数，不包含第一次调用，0代表不重试-->
+        <!-- 幂等（设置重试次数）【查询、删除、修改】、非幂等（不能设置重试次数）【新增】 -->
     </dubbo:reference>
 
-<!--    &lt;!&ndash; 配置当前消费者的统一规则：所有的服务都不检查 &ndash;&gt;-->
-<!--    <dubbo:consumer check="false" timeout="5000"></dubbo:consumer>-->
+    <!-- 注册监控中心 查看服务的调用信息 -->
+    <!--    <dubbo:monitor protocol="registry"></dubbo:monitor>-->
+    <dubbo:monitor address="127.0.0.1:7070"></dubbo:monitor>
 
-<!--    <dubbo:monitor protocol="registry"></dubbo:monitor>-->
-<!--    &lt;!&ndash; <dubbo:monitor address="127.0.0.1:7070"></dubbo:monitor> &ndash;&gt;-->
+    <!-- 全局配置当前消费者的统一规则 -->
+    <!-- a. check 所有的服务都不检查 -->
+    <!-- b. timeout 配置超时时间 -->
+    <dubbo:consumer check="false" timeout="5000"></dubbo:consumer>
 
 </beans>
