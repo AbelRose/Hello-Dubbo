@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.matrix.gmall.bean.UserAddress;
 import com.matrix.gmall.service.OrderService;
 import com.matrix.gmall.service.UserService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +43,13 @@ public class OrderServiceImpl implements OrderService {
      * 消费: 远程去引用这个UserService的服务
      */
 //    @Autowired
+//    可以用本地缓存连接远程服务
+//    @Reference(url = "127.0.0.1:2088") // Dubbo直连 是绕过ZK的(当ZK宕机或者没有注册中心的时候)
+//    @Reference(loadbalance="配置负载均衡的属性")
     @Reference
     UserService userService;
 
+    @HystrixCommand(fallbackMethod = "hystrix")
     @Override
     public List<UserAddress> initOrder(String userId) {
         System.out.println("用户Id" + userId);
@@ -52,5 +57,14 @@ public class OrderServiceImpl implements OrderService {
         List<UserAddress> userAddressList = userService.getUserAddressList(userId);
         userAddressList.forEach(userAddress -> System.out.println(userAddress.getUserAddress()));
         return userAddressList;
+    }
+
+    /**
+     * 出错的时候调用这个方法
+     * @param userId userId
+     * @return List<UserAddress>
+     */
+    public String hystrix(String userId) {
+        return "Hystrix 出错了...";
     }
 }

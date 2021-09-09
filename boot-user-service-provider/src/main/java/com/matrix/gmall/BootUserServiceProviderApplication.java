@@ -3,6 +3,7 @@ package com.matrix.gmall;
 import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.ImportResource;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.ImportResource;
  *    实现类中的暴露@Service注解也可以不用了
  * 3. 使用注解API的方式: 写一个配置类 将每个组件手动创建到容器里面
  */
+@EnableHystrix
 @EnableDubbo
 @SpringBootApplication
 public class BootUserServiceProviderApplication {
